@@ -91,18 +91,18 @@ validate_id() {
 migrate_content_directories() {
     if [[ -d "$CONTENT_DIR" ]]; then
         printf "${NAVY_BLUE}Migrating content directories...${NC}\n"
-        if ! cp -rf "$CONTENT_DIR/"* "$AGENT_DIR/"; then
+        if ! cp -rf "$CONTENT_DIR/Commands/"* "$COMMANDS_DIR/" 2>/dev/null || true
+cp -rf "$CONTENT_DIR/Masks/"* "$MASKS_DIR/" 2>/dev/null || true
+cp -rf "$CONTENT_DIR/sounds/"* "$SOUNDS_DIR/" 2>/dev/null || true
+cp -rf "$CONTENT_DIR/Media/XML/"* "$CONFIG_DIR/" 2>/dev/null || true
+cp -rf "$CONTENT_DIR/Media/Models/"* "$MODEL_DIR/" 2>/dev/null || true; then
             error_exit "Failed to migrate content directories"
         fi
 
-        if ! rm -rf "$CONTENT_DIR"; then
-            printf "${ERROR_RED}Failed to remove Content directory on first attempt.${NC}\n${LITE_GREEN}Trying Again...${NC}\n"
-            sleep 5
-            chattr -R -i "$CONTENT_DIR"  # Remove immutable flag
-            if ! rm -vrf "$CONTENT_DIR"; then
-                 printf "${ERROR_RED}Couldn't remove the Content directory.${NC}\n${ORANGE} Continuing anyways...${NC}\n"
-            fi
-        fi
+if ! rm -rf "$CONTENT_DIR"; then
+    printf "${ORANGE}Could not remove Content directory; continuing for Pterodactyl.${NC}\n"
+    return 0
+fi
 
     if [[ -n "$PUID" && $PUID -ne 0 ]]; then
         validate_id "$PUID" "PUID"
